@@ -1,5 +1,5 @@
 #!/usr/bin / env node
-"use strict";
+
 const fs = require("fs");
 const child_process = require("child_process");
 const readline = require("readline");
@@ -18,49 +18,42 @@ const rl = readline.createInterface({
 });
 
 
-
 const baseFile = "base.txt";
 const tempFile = "temp.txt";
 const confName = "api-check.config.json";
 let config = "";
 
-checkApi();
+try {
+  config = fs.readFileSync(confName, "utf8");
+} catch (e) {
+  console.log("\x1b[31m", `Can\`t read config file: ${confName}`);
+  throw e;
+}
 
-
-function checkApi() {
+try {
+  config = JSON.parse(config);
+} catch (e) {
+  console.log(`Can\`t parse config file: ${confName}`);
+  throw e;
+}
  
-  try {
-    config = fs.readFileSync(confName, "utf8");
-  } catch (e) {
-    console.log("\x1b[31m", `Can\`t read config file: ${confName}`);
-    throw e;
-  }
+https
+  .get(config.url, resp => {
+    let data = "";
 
-  try {
-    config = JSON.parse(config);
-  } catch (e) {
-    console.log(`Can\`t parse config file: ${confName}`);
-    throw e;
-  }
+    // A chunk of data has been recieved.
+    resp.on("data", chunk => {
+      data += chunk;
+    });
 
-  https
-    .get(config.url, resp => {
-      let data = "";
-
-      // A chunk of data has been recieved.
-      resp.on("data", chunk => {
-        data += chunk;
-      });
-
-      // The whole response has been received. Print out the result.
-      resp.on("end", () => {
-        console.log("\x1b[32m", "Fetch remote data");
-        saveFile(config.tmpPath + tempFile, data, function(err) {
-          if (err) {
-            return console.log(err);
-          }
-          console.log("Done.");
-        });
+    // The whole response has been received. Print out the result.
+    resp.on("end", () => {
+      console.log("\x1b[32m", "Fetch remote data");
+      saveFile(config.tmpPath + tempFile, data, function(err) {
+        if (err) {
+          return console.log(err);
+        }
+        console.log("Done.");
         if (!fs.existsSync(config.tmpPath + baseFile)) {
           console.log("Local data does not exist, make it");
           saveFile(config.tmpPath + baseFile, data, function(err) {
@@ -68,19 +61,22 @@ function checkApi() {
               return console.log(err);
             }
             console.log("\x1b[32m", "Done.");
+            checkDiff();
           });
         }else{
           checkDiff();
         }
-
       });
-    })
-    .on("error", err => {
-      showRemoteErrorAlert();
-      console.log("Error: " + err.message);
-      process.exit();
+     
+
     });
-}
+  })
+  .on("error", err => {
+    showRemoteErrorAlert();
+    console.log("Error: " + err.message);
+    process.exit();
+  });
+ 
 
 function saveFile(path, content, callback) {
   if (!fs.existsSync(config.tmpPath)) {
