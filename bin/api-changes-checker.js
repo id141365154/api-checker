@@ -12,7 +12,14 @@ process.on("unhandledRejection", err => {
   throw err;
 });
 
+
+const baseFile = "base.txt";
+const tempFile = "temp.txt";
+const confName = "api-check.config.json";
+let config = "";
+
 checkApi();
+
 
 function checkApi() {
   const rl = readline.createInterface({
@@ -20,23 +27,18 @@ function checkApi() {
     output: process.stdout
   });
 
-  const baseFile = "base.txt";
-  const tempFile = "temp.txt";
-  const confName = "api-check.config.json";
-  let config = "";
-
   try {
     config = fs.readFileSync(confName, "utf8");
   } catch (e) {
     console.log("\x1b[31m", `Can\`t read config file: ${confName}`);
-    console.log("e", e);
+    throw e;
   }
 
   try {
     config = JSON.parse(config);
   } catch (e) {
     console.log(`Can\`t parse config file: ${confName}`);
-    console.log("e", e);
+    throw e;
   }
 
   https
