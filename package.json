@@ -1,6 +1,6 @@
 {
   "name": "api-changes-checker",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Make diff with remote api description file and local file",
   "files": [
     "bin",
@@ -20,8 +20,5 @@
     "changes"
   ],
   "author": "Victor Kulyabin <id141365154@mail.com>",
-  "license": "ISC",
-  "engines": {
-    "node": ">=8.10"
-  }
+  "license": "ISC"
 }

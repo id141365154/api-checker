@@ -14,7 +14,7 @@ process.on("unhandledRejection", err => {
 
 checkApi();
 
-const checkApi = function() {
+function checkApi() {
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -75,7 +75,7 @@ const checkApi = function() {
       console.log("Error: " + err.message);
       process.exit();
     });
-};
+}
 
 function saveFile(path, content, callback) {
   if (!fs.existsSync(config.tmpPath)) {
