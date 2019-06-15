@@ -1,13 +1,13 @@
 {
   "name": "api-changes-checker",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Make diff with remote api description file and local file",
   "files": [
     "bin",
     "sample.config.json"
   ],
   "bin": {
-    "api-changes-checker": "./bin/api-changes-checker.js"
+    "api-changes-checker": "bin/api-changes-checker.js"
   },
   "repository": {
     "type": "git",
