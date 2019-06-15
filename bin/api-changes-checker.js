@@ -12,6 +12,12 @@ process.on("unhandledRejection", err => {
   throw err;
 });
 
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+
 
 const baseFile = "base.txt";
 const tempFile = "temp.txt";
@@ -22,11 +28,7 @@ checkApi();
 
 
 function checkApi() {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
-
+ 
   try {
     config = fs.readFileSync(confName, "utf8");
   } catch (e) {
