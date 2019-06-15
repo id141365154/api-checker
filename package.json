@@ -2,9 +2,11 @@
   "name": "api-changes-checker",
   "version": "1.0.0",
   "description": "Make diff with remote api description and local\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[C file \u001b[C\u001b[C\u001b[and local file",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "files": [
+    "bin"
+  ],
+  "bin": {
+    "api-changes-checker": "./bin/api-changes-checker.js"
   },
   "repository": {
     "type": "git",
@@ -17,5 +19,8 @@
     "changes"
   ],
   "author": "Victor Kulyabin <id141365154@mail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": ">=8.10"
+  }
 }
