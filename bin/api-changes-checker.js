@@ -69,9 +69,10 @@ function checkApi() {
             }
             console.log("\x1b[32m", "Done.");
           });
+        }else{
+          checkDiff();
         }
 
-        checkDiff();
       });
     })
     .on("error", err => {

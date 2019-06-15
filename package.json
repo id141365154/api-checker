@@ -1,6 +1,6 @@
 {
   "name": "api-changes-checker",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Make diff with remote api description file and local file",
   "files": [
     "bin",
