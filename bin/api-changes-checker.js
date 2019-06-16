@@ -107,6 +107,7 @@ function checkDiff() {
       tempFile,
     function(error, stdout, stderr) {
       if (stdout) {
+
         showChangesAlert(stdout);
 
         rl.question(
@@ -130,6 +131,8 @@ function checkDiff() {
       }
     }
   );
+
+
 }
 
 function showChangesAlert(body) {
@@ -143,7 +146,20 @@ function showChangesAlert(body) {
     =================================
     `;
   console.log("\x1b[31m", header);
-  console.log("\x1b[36m", body);
+  var arDiff = body.split("\n"); 
+  arDiff.forEach((str, i)=>{
+
+    let color =  "\x1b[37m"
+
+    if (str[0] === "-") {
+      color = "\x1b[31m";
+    }
+    if (str[0] === "+") {
+      color = "\x1b[32m";
+    }
+
+    console.log(color,str);
+  });
   console.log("\x1b[31m", footer);
 }
 
