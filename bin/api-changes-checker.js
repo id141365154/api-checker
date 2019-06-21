@@ -67,8 +67,7 @@ Promise.all(
                     console.log("\x1b[32m", "Done.");
                     // checkDiff();
                     //if (true) resolve({ success: true })
-
-                    resolve(checkDiff());
+                    checkDiff(resolve);
                   });
                 } else {
                   //if (true) resolve({ success: true })
@@ -112,7 +111,7 @@ function updateBaseFile() {
 }
 
 function checkDiff(resolve) {
-  let res = child_process.exec(
+  child_process.exec(
     "git diff  --no-index " +
       config.tmpPath +
       baseFile +
@@ -121,12 +120,18 @@ function checkDiff(resolve) {
       tempFile,
     function(error, stdout, stderr) {
       if (stdout) {
-        result.status = false;
-        result.body = stdout;
+        resolve({
+          diff: stdout,
+          proceed: false
+        });
 
-        showChangesAlert(stdout);
+        //showChangesAlert(stdout);
 
-        rl.question(
+        /* 
+            Перенести отсюда
+          */
+
+        /* rl.question(
           "Please, confirm that you are read this message, and we will proceed [y/n] ",
           answer => {
             if (answer.match(/^y(es)?$/i)) {
@@ -140,10 +145,12 @@ function checkDiff(resolve) {
 
             rl.close();
           }
-        );
+        ); */
       } else {
-        result.status = true;
-        result.body = "";
+        resolve({
+          diff: "",
+          proceed: true
+        });
         //showSuccessAlert()
         //process.exit()
       }
