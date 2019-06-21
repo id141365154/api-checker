@@ -17,7 +17,6 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-
 const baseFile = "base.txt";
 const tempFile = "temp.txt";
 const confName = "api-check.config.json";
@@ -36,47 +35,62 @@ try {
   console.log(`Can\`t parse config file: ${confName}`);
   throw e;
 }
- 
-https
-  .get(config.url, resp => {
-    let data = "";
 
-    // A chunk of data has been recieved.
-    resp.on("data", chunk => {
-      data += chunk;
-    });
+Promise.all(
+  config.urls.map(
+    url =>
+      new Promise((resolve, reject) => {
+        https
+          .get(url, resp => {
+            let data = "";
 
-    // The whole response has been received. Print out the result.
-    resp.on("end", () => {
-      console.log("\x1b[32m", "Fetch remote data");
-      saveFile(config.tmpPath + tempFile, data, function(err) {
-        if (err) {
-          return console.log(err);
-        }
-        console.log("Done.");
-        if (!fs.existsSync(config.tmpPath + baseFile)) {
-          console.log("Local data does not exist, make it");
-          saveFile(config.tmpPath + baseFile, data, function(err) {
-            if (err) {
-              return console.log(err);
-            }
-            console.log("\x1b[32m", "Done.");
-            checkDiff();
+            // A chunk of data has been recieved.
+            resp.on("data", chunk => {
+              data += chunk;
+            });
+
+            // The whole response has been received. Print out the result.
+            resp.on("end", () => {
+              console.log("\x1b[32m", "Fetch remote data");
+              saveFile(config.tmpPath + tempFile, data, function(err) {
+                if (err) {
+                  resolve({ error: "NetworkError" });
+                  return console.log(err);
+                }
+                console.log("Done.");
+                if (!fs.existsSync(config.tmpPath + baseFile)) {
+                  console.log("Local data does not exist, make it");
+                  saveFile(config.tmpPath + baseFile, data, function(err) {
+                    if (err) {
+                      return console.log(err);
+                    }
+                    console.log("\x1b[32m", "Done.");
+                    // checkDiff();
+                    //if (true) resolve({ success: true })
+
+                    resolve(checkDiff());
+                  });
+                } else {
+                  //if (true) resolve({ success: true })
+                  // checkDiff();
+                  checkDiff(resolve);
+                }
+              });
+            });
+          })
+          .on("error", err => {
+            resolve({ error: "NetworkError" });
+            //   showRemoteErrorAlert();
+            //   console.log("Error: " + err.message);
+            //   process.exit();
           });
-        }else{
-          checkDiff();
-        }
-      });
-     
-
-    });
+      })
+  )
+)
+  .then(results => {
+    console.log(results);
   })
-  .on("error", err => {
-    showRemoteErrorAlert();
-    console.log("Error: " + err.message);
-    process.exit();
-  });
- 
+  .catch(console.log);
 
 function saveFile(path, content, callback) {
   if (!fs.existsSync(config.tmpPath)) {
@@ -97,8 +111,8 @@ function updateBaseFile() {
   });
 }
 
-function checkDiff() {
-  child_process.exec(
+function checkDiff(resolve) {
+  let res = child_process.exec(
     "git diff  --no-index " +
       config.tmpPath +
       baseFile +
@@ -107,6 +121,8 @@ function checkDiff() {
       tempFile,
     function(error, stdout, stderr) {
       if (stdout) {
+        result.status = false;
+        result.body = stdout;
 
         showChangesAlert(stdout);
 
@@ -126,13 +142,13 @@ function checkDiff() {
           }
         );
       } else {
-        showSuccessAlert();
-        process.exit();
+        result.status = true;
+        result.body = "";
+        //showSuccessAlert()
+        //process.exit()
       }
     }
   );
-
-
 }
 
 function showChangesAlert(body) {
@@ -146,10 +162,9 @@ function showChangesAlert(body) {
     =================================
     `;
   console.log("\x1b[31m", header);
-  var arDiff = body.split("\n"); 
-  arDiff.forEach((str, i)=>{
-
-    let color =  "\x1b[37m"
+  var arDiff = body.split("\n");
+  arDiff.forEach((str, i) => {
+    let color = "\x1b[37m";
 
     if (str[0] === "-") {
       color = "\x1b[31m";
@@ -158,7 +173,7 @@ function showChangesAlert(body) {
       color = "\x1b[32m";
     }
 
-    console.log(color,str);
+    console.log(color, str);
   });
   console.log("\x1b[31m", footer);
 }
@@ -196,4 +211,11 @@ function showSuccessAlert() {
   console.log("\x1b[31m", header);
   console.log("\x1b[36m", body);
   console.log("\x1b[31m", footer);
+}
+
+function promiseFromChildProcess(child) {
+  return new Promise(function(resolve, reject) {
+    child.addListener("error", reject);
+    child.addListener("exit", resolve);
+  });
 }
