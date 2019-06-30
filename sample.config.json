@@ -1,7 +1,8 @@
 {
-  "urls": [
-    "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY",
-    "https://api.nasas.gov/planetary/apod?api_key=DEMO_KEY"
-  ],
-  "tmpPath": "./api_check_tmp/"
+    "urls": [
+        "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY",
+        "https://mail.yandex.ru/robots.txt"
+        "https://mail.yandexError.ru/robots.txt"
+    ],
+    "tmpPath": "./api_check_tmp/"
 }
