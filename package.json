@@ -1,29 +1,29 @@
 {
-  "name": "api-changes-checker",
-  "version": "1.2.0",
-  "description": "Make diff with remote api description file and local file",
-  "files": [
-    "bin",
-    "sample.config.json"
-  ],
-  "bin": {
-    "api-changes-checker": "bin/api-changes-checker.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/id141365154/api-checker"
-  },
-  "keywords": [
-    "remote",
-    "diff",
-    "api",
-    "changes"
-  ],
-  "author": "Victor Kulyabin <id141365154@mail.com>",
-  "license": "ISC",
-  "devDependencies": {
-    "ascii-art": "^1.5.1",
-    "md5": "^2.2.1",
-    "print-message": "^2.1.0"
-  }
+    "name": "api-changes-checker",
+    "version": "1.2.0",
+    "description": "Make diff with remote api description file and local file",
+    "files": [
+        "bin",
+        "sample.config.json"
+    ],
+    "bin": {
+        "api-changes-checker": "bin/api-changes-checker.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/id141365154/api-checker"
+    },
+    "keywords": [
+        "remote",
+        "diff",
+        "api",
+        "changes"
+    ],
+    "author": "Victor Kulyabin <id141365154@mail.com>",
+    "license": "ISC",
+    "dependencies": {
+        "md5": "^2.2.1",
+        "print-message": "^2.1.0"
+    },
+    "devDependencies": {}
 }
