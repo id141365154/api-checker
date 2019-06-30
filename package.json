@@ -20,5 +20,10 @@
     "changes"
   ],
   "author": "Victor Kulyabin <id141365154@mail.com>",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "ascii-art": "^1.5.1",
+    "md5": "^2.2.1",
+    "print-message": "^2.1.0"
+  }
 }
