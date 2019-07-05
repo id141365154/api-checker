@@ -4,7 +4,6 @@ const fs = require("fs");
 const child_process = require("child_process");
 const readline = require("readline");
 const https = require("https");
-const md5 = require("md5");
 const printMessage = require("print-message");
 
 // Makes the script crash on unhandled rejections instead of silently
@@ -40,6 +39,13 @@ try {
 
 printMessage(["API CHANGES"]);
 
+const makeFilename = url => {
+  return url
+    .replace(/(http?s:\/\/)/g, "")
+    .replace(/(www\.)/g, "")
+    .replace(/\W/g, "_");
+};
+
 Promise.all(
   config.urls.map(
     url =>
@@ -63,7 +69,7 @@ Promise.all(
               } catch (e) {}
 
               saveFile(
-                config.tmpPath + md5(url) + "_" + tempFile,
+                config.tmpPath + makeFilename(url) + "_" + tempFile,
                 parsedData,
                 function(err) {
                   if (err) {
@@ -74,11 +80,13 @@ Promise.all(
                   }
                   console.log("", "Done");
                   if (
-                    !fs.existsSync(config.tmpPath + md5(url) + "_" + baseFile)
+                    !fs.existsSync(
+                      config.tmpPath + makeFilename(url) + "_" + baseFile
+                    )
                   ) {
                     console.log("", "Local data does not exist, make it");
                     saveFile(
-                      config.tmpPath + md5(url) + "_" + baseFile,
+                      config.tmpPath + makeFilename(url) + "_" + baseFile,
                       parsedData,
                       function(err) {
                         if (err) {
@@ -158,28 +166,32 @@ function saveFile(path, content, callback) {
 
 function updateBaseFile(url) {
   const tmpData = fs.readFileSync(
-    config.tmpPath + md5(url) + "_" + tempFile,
+    config.tmpPath + makeFilename(url) + "_" + tempFile,
     "utf8"
   );
-  saveFile(config.tmpPath + md5(url) + "_" + baseFile, tmpData, function(err) {
-    if (err) {
-      return console.log(err);
+  saveFile(
+    config.tmpPath + makeFilename(url) + "_" + baseFile,
+    tmpData,
+    function(err) {
+      if (err) {
+        return console.log(err);
+      }
+      console.log("\x1b[32m", url + " Updated!");
+      process.exit();
     }
-    console.log("\x1b[32m", url + " Updated!");
-    process.exit();
-  });
+  );
 }
 
 function checkDiff(resolve, url) {
   child_process.exec(
     "git diff  --no-index " +
       config.tmpPath +
-      md5(url) +
+      makeFilename(url) +
       "_" +
       baseFile +
       " " +
       config.tmpPath +
-      md5(url) +
+      makeFilename(url) +
       "_" +
       tempFile,
     function(error, stdout, stderr) {
