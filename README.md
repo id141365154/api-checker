@@ -8,7 +8,7 @@
 
 В корне проекта создайте `api-check.config.json`
 
-`{ "url": "https://yandex.ru/robots.txt", "tmpPath": "./.api_check_tmp/" }`
+`{ "urls": ["https://yandex.ru/robots.txt"], "tmpPath": "./.api_check_tmp/" }`
 
 `url - URL актуальных данных`
 
